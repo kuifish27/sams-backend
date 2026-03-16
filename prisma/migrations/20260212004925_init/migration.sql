@@ -1,0 +1,16 @@
+/*
+  Warnings:
+
+  - The primary key for the `Admin` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The `id` column on the `Admin` table would be dropped and recreated. This will lead to data loss if there is data in the column.
+
+*/
+-- AlterTable
+ALTER TABLE "Admin" DROP CONSTRAINT "Admin_pkey",
+ADD COLUMN     "role" TEXT NOT NULL DEFAULT 'ADMIN',
+DROP COLUMN "id",
+ADD COLUMN     "id" SERIAL NOT NULL,
+ADD CONSTRAINT "Admin_pkey" PRIMARY KEY ("id");
+
+-- AlterTable
+ALTER TABLE "Student" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

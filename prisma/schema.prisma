@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // change if using mysql/sqlite
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  avatar    String?
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  studentId String   @unique @default(uuid())
+  name      String
+  email     String   @unique
+  password  String?
+  createdAt DateTime @default(now())
+
+  enrollments Enrollment[]
+  Attendance  Attendance[]
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  courseId  Int
+  date      DateTime
+  status    String   // present, absent, late
+
+  student   Student @relation(fields: [studentId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, courseId, date])
+}
+
+model Course {
+  id   Int    @id @default(autoincrement())
+  name String
+  code String @unique
+
+  enrollments Enrollment[]
+  Attendance  Attendance[]
+}
+
+model Enrollment {
+  id        Int @id @default(autoincrement())
+
+  studentId Int
+  courseId  Int
+  sectionId Int?
+
+  student Student  @relation(fields: [studentId], references: [id])
+  course  Course   @relation(fields: [courseId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, courseId])
+}
